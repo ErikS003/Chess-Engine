@@ -10,8 +10,42 @@ from urllib.parse import urljoin
 
 
 def fetch_games_from_lichess(username, count):
+    url = f"https://lichess.org/api/games/user/{username}?max={count}"
+    headers = {"Accept": "application/x-ndjson"}
 
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        game_urls = []
+        for line in response.iter_lines(decode_unicode=True):
+            if line:
+                game = json.loads(line)
+                game_id = game["id"]
+                game_url = f"https://lichess.org/game/export/{game_id}.pgn"
+                game_urls.append(game_url)
+        return game_urls
+    else:
+        print(f"Failed to fetch games. Status code: {response.status_code}")
+        return None
+
+
+# Generate PGN data from game URLs
 def generate_pgn_data(game_urls):
+    pgn = ""
+    for game_url in game_urls:
+        try:
+            pgn_data = requests.get(game_url).text
+            pgn += pgn_data + "\n\n"
+        except Exception as e:
+            print(f"Failed to fetch game PGN. Error: {e}")
+
+    return pgn.strip()
+
+
+# Save PGN data to file
+def save_pgn_data(pgn_data, file_path):
+    with open(file_path, "w") as f:
+        f.write(pgn_data)
+    print("PGN data saved successfully.")
 
 #Define the CNN model architecture
 model = keras.Sequential([
@@ -25,8 +59,6 @@ model = keras.Sequential([
 
 #Compile the model
 model.compile(optimizer='adam', loss='binary_crossentropy')
-
-def save_pgn_data(pgn_data, file_path):
 
 def generate_training_and_validation_data(pgn_file):
 
