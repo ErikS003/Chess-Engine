@@ -1,1 +1,26 @@
+import chess
+import chess.pgn
+import numpy as np
+import requests
+import os
+from tensorflow import keras
+from tensorflow.keras import layers
+from urllib.parse import urljoin
 
+
+
+def fetch_games_from_lichess(username, count):
+
+def generate_pgn_data(game_urls):
+
+####model####
+
+#############
+
+def save_pgn_data(pgn_data, file_path):
+
+def generate_training_and_validation_data(pgn_file):
+
+def train_model_with_validation(pgn_file):
+
+def make_move(board):
