@@ -60,7 +60,9 @@ model = keras.Sequential([
 #Compile the model
 model.compile(optimizer='adam', loss='binary_crossentropy')
 
-def generate_training_and_validation_data(pgn_file):
+def train_model_with_validation(pgn_file):
+    x_train, y_train, x_val, y_val = generate_training_and_validation_data(pgn_file)
+    model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=10, batch_size=32)
 
 def train_model_with_validation(pgn_file):
 
