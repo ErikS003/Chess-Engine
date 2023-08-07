@@ -13,9 +13,18 @@ def fetch_games_from_lichess(username, count):
 
 def generate_pgn_data(game_urls):
 
-####model####
+#Define the CNN model architecture
+model = keras.Sequential([
+    layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(8, 8, 12)),
+    layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+    layers.Flatten(),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
 
-#############
+#Compile the model
+model.compile(optimizer='adam', loss='binary_crossentropy')
 
 def save_pgn_data(pgn_data, file_path):
 
