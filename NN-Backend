@@ -60,6 +60,36 @@ model = keras.Sequential([
 #Compile the model
 model.compile(optimizer='adam', loss='binary_crossentropy')
 
+# Generate training data from PGN file
+def generate_training_and_validation_data(pgn_file):
+    data = []
+    labels = []
+
+    pgn = open(pgn_file)
+    while True:
+        game = chess.pgn.read_game(pgn)
+        if game is None:
+            break
+
+        board = game.board()
+        for move in game.mainline_moves():
+            # Convert the chess board to a numerical representation
+            input_data = np.zeros((8, 8, 12), dtype=np.uint8)
+            for square, piece in board.piece_map().items():
+                row = chess.square_rank(square)
+                col = chess.square_file(square)
+                input_data[row, col, piece.piece_type] = piece.color * 6 + piece.piece_type
+
+            data.append(input_data)
+
+            # Determine if the move is a winning move or not
+            board.push(move)
+            labels.append(int(board.is_checkmate()))
+
+    x_train, x_val, y_train, y_val = train_test_split(data, labels, test_size=0.2, random_state=42)
+
+    return np.array(x_train), np.array(y_train), np.array(x_val), np.array(y_val)
+
 def train_model_with_validation(pgn_file):
     x_train, y_train, x_val, y_val = generate_training_and_validation_data(pgn_file)
     model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=10, batch_size=32)
