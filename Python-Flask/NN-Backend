@@ -89,13 +89,13 @@ def generate_training_and_validation_data(pgn_file):
             board.push(move)
             labels.append(int(board.is_checkmate()))
 
-    x_train, x_val, y_train, y_val = train_test_s+plit(data, labels, test_size=0.2, random_state=42)
+    x_train, x_val, y_train, y_val = train_test_split(data, labels, test_size=0.2, random_state=42)
 
     return np.array(x_train), np.array(y_train), np.array(x_val), np.array(y_val)
 
 def train_model_with_validation(pgn_file):
     x_train, y_train, x_val, y_val = generate_training_and_validation_data(pgn_file)
-    model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=1, batch_size=100)
+    model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=10, batch_size=32)
 
 def make_move(board):
     legal_moves = list(board.legal_moves)
@@ -171,7 +171,7 @@ def play_match():
 
 if __name__ == "__main__":
     username = "DrNykterstein"
-    count = 1
+    count = 10000
     file_path = "lichess_games.pgn"
 
     game_urls = fetch_games_from_lichess(username, count)
