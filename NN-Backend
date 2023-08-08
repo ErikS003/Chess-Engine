@@ -89,7 +89,7 @@ def generate_training_and_validation_data(pgn_file):
             board.push(move)
             labels.append(int(board.is_checkmate()))
 
-    x_train, x_val, y_train, y_val = train_test_s+plit(data, labels, test_size=0.2, random_state=42)
+    x_train, x_val, y_train, y_val = train_test_split(data, labels, test_size=0.2, random_state=42)
 
     return np.array(x_train), np.array(y_train), np.array(x_val), np.array(y_val)
 
