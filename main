@@ -110,4 +110,42 @@ def make_move(board):
         print("No legal moves found. Game over.")
         return None
 
-def play_match()
+def play_match():
+    board = chess.Board()
+
+    while not board.is_game_over():
+        if board.turn == chess.WHITE:
+            # Human player's move
+            print("Current board:")
+            print(board)
+            move_uci = input("Enter your move in UCI notation (e.g., e2e4): ")
+            move = chess.Move.from_uci(move_uci)
+        else:
+            # Neural network's move
+            move = make_move(board)
+
+        # Validate the legality of the move
+        if move in board.legal_moves:
+            board.push(move)
+        else:
+            print("Invalid move selected. Choosing a random legal move.")
+            random_move = np.random.choice(list(board.legal_moves))
+            board.push(random_move)
+
+    print("Game over.")
+    print("Result: ", board.result())
+
+
+if __name__ == "__main__":
+    username = "DrNykterstein"
+    count = 10000
+    file_path = "lichess_games.pgn"
+
+    game_urls = fetch_games_from_lichess(username, count)
+    if game_urls:
+        pgn_data = generate_pgn_data(game_urls)
+        if pgn_data:
+            save_pgn_data(pgn_data, file_path)
+            train_model_with_validation(file_path)
+
+    play_match()
